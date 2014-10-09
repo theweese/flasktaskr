@@ -39,7 +39,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="#!/usr/bin/env python"
+VIRTUAL_ENV="/Users/bweese/Google Drive/Programming/Real Python/flasktaskr/env"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
