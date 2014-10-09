@@ -3,13 +3,13 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for, g
 from functools import wraps
 from forms import AddTaskForm
-from flask.ext.sqlalchemy import sqlalchemy
+from flask.ext.sqlalchemy import SQLAlchemy
 
 
 
 app = Flask(__name__)
 app.config.from_object('config')
-db = sqlalchemy(app)
+db = SQLAlchemy(app)
 
 from models import Task
 
