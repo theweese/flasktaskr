@@ -9,6 +9,7 @@ from functools import wraps
 from forms import AddTaskForm, RegisterForm, LoginForm
 from flask.ext.sqlalchemy import SQLAlchemy
 import datetime
+from sqlalchemy.exc import IntegrityError
 
 ##############
 ##  config  ##
@@ -129,6 +130,11 @@ def delete_entry(task_id):
 	flash('The task was deleted.')
 	return redirect(url_for('tasks'))
 
+def flash_errors(form):
+	for field, errors in form.errors.items():
+		for error in errors:
+			flash(u"Error in the %s field -%s" % (
+				getattr(form, field).label.text, error), 'error')
 
 # function for handling user registration
 @app.route('/register/', methods=['GET', 'POST'])
@@ -142,10 +148,14 @@ def register():
 				form.email.data,
 				form.password.data,
 			)
-			db.session.add(new_user)
-			db.session.commit()
-			flash('Thanks for registering.  Pleaes login.')
-			return redirect(url_for('login'))
+			try:
+				db.session.add(new_user)
+				db.session.commit()
+				flash('Thanks for registering.  Pleaes login.')
+				return redirect(url_for('login'))
+			except IntegrityError:
+				error = 'Oh no! That username and/or email already exist. Please try again.'
+				return render_template('register.html', form=form, error=error)
 		else:
 			return render_template('register.html', form=form, error=error)
 	if request.method == 'GET':
