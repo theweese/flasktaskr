@@ -1,6 +1,6 @@
 # views.py
 
-from flask import Flask, flash, redirect, render_template, request, session, url_for, g
+from flask import Flask, flash, redirect, render_template, request, session, url_for
 from functools import wraps
 from forms import AddTaskForm
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -61,10 +61,11 @@ def tasks():
 	)
 
 # function for adding a new task
-@app.route('/add/', methods=['POST'])
+@app.route('/add/', methods=['GET', 'POST'])
 @login_required
 def new_task():
 	form = AddTaskForm(request.form)
+	print form.name
 	if request.method == 'POST':
 		if form.validate_on_submit():
 			new_task = Task(
@@ -72,11 +73,13 @@ def new_task():
 				form.due_date.data,
 				form.priority.data,
 				'1'
-				)
+			)
 			db.session.add(new_task)
 			db.session.commit()
 			flash('New entry was successfully posted. Thanks.')
-		return redirect(url_for('tasks'))
+		else:
+			flash('Invalid Entry.  Please try again.')
+	return redirect(url_for('tasks'))
 
 
 # function for marking a task as complete
