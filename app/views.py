@@ -49,7 +49,7 @@ def login():
 	if request.method == 'GET':
 		return render_template('login.html')
 
-
+# this function is here to facilitate displaying existing tasks
 @app.route('/tasks/')
 @login_required
 def tasks():
@@ -98,6 +98,7 @@ def complete(task_id):
 	flash('The task was marked as complete.')
 	return redirect(url_for('tasks'))
 
+# function for handling entry deletion
 @app.route('/delete/<int:task_id>/',)
 @login_required
 def delete_entry(task_id):
@@ -108,7 +109,26 @@ def delete_entry(task_id):
 	return redirect(url_for('tasks'))
 
 
-
+# function for handling user registration
+@app.route('/register/', methods=['GET', 'POST'])
+def register():
+	error = None
+	form = RegisterForm(request.form)
+	if request.method == 'POST':
+		if form.validate_on_submit():
+			new_user = User(
+				form.name.data,
+				form.email.data,
+				form.password.data,
+			)
+			db.session.add(new_user)
+			db.session.commit()
+			flash('Thanks for registering.  Pleaes login.')
+			return redirect(url_for('login'))
+		else:
+			return render_template('register.html', form=form, error=error)
+	if request.method == 'GET':
+		return render_template('register.html', form=form)
 
 
 
