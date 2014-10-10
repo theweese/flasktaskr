@@ -35,6 +35,7 @@ def login_required(test):
 def logout():
 	session.pop('logged_in', None)
 	session.pop('user_id', None)
+	session.pop('role', None)
 	flash('You are logged out. Bye! :(')
 	return redirect(url_for('login'))
 
@@ -59,6 +60,7 @@ def login():
 			else:
 				session['logged_in'] = True
 				session['user_id'] = u.id
+				session['role'] = u.role
 				flash('You are logged in. Go Crazy!')
 				return redirect(url_for('tasks'))
 		else:
@@ -115,20 +117,30 @@ def new_task():
 @login_required
 def complete(task_id):
 	new_id = task_id
-	db.session.query(Task).filter_by(task_id=new_id).update({"status":"0"})
-	db.session.commit()
-	flash('The task was marked as complete.')
-	return redirect(url_for('tasks'))
+	task = db.session.query(Task).filter_by(task_id=new_id).update({"status":"0"})
+	if session['user_id'] == task.first().user_id or session['role'] == "admin":
+		task.update({"status:" "0"})
+		db.session.commit()
+		flash('The task was marked as complete. Nice.')
+		return redirect(url_for('tasks'))
+	else:
+		flash('You can only update tasks that belong to you.')
+		return redirect(url_for('tasks'))
 
 # function for handling entry deletion
 @app.route('/delete/<int:task_id>/',)
 @login_required
 def delete_entry(task_id):
 	new_id = task_id
-	db.session.query(Task).filter_by(task_id=new_id).delete()
-	db.session.commit()
-	flash('The task was deleted.')
-	return redirect(url_for('tasks'))
+	task = db.session.query(Task).filter_by(task_id=new_id).delete()
+	if session['user_id'] == task.first().user_id or session['role'] == "admin":
+		task.delete()
+		db.session.commit()
+		flash('The task was deleted.')
+		return redirect(url_for('tasks'))
+	else:
+		flash('You can only delete tasks that belong to you.')
+		return redirect(url_for('tasks'))
 
 def flash_errors(form):
 	for field, errors in form.errors.items():
@@ -162,7 +174,16 @@ def register():
 		return render_template('register.html', form=form)
 
 
-
+# function for creating admin user
+def create_admin_user(self):
+	new_user = User(
+		name='Superman',
+		email='admin@realpython.com',
+		password='allpowerfull',
+		role='admin'
+	)
+	db.session.add(new_user)
+	db.session.commit()
 
 
 
