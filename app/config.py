@@ -6,8 +6,8 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 DATABASE = 'flastaskr.db'
-USERNAME = 'admin'
-PASSWORD = 'admin'
+#USERNAME = 'admin'
+#PASSWORD = 'admin'
 WTF_CSRF_ENABLED = 'TRUE'
 SECRET_KEY = 'my_precious'
 

@@ -1,17 +1,23 @@
 # views.py
 
+#############
+## imports ##
+#############
+
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from functools import wraps
-from forms import AddTaskForm
+from forms import AddTaskForm, RegisterForm, LoginForm
 from flask.ext.sqlalchemy import SQLAlchemy
 
-
+##############
+##  config  ##
+##############
 
 app = Flask(__name__)
 app.config.from_object('config')
 db = SQLAlchemy(app)
 
-from models import Task
+from models import Task, User
 
 def login_required(test):
 	@wraps(test)
