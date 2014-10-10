@@ -23,17 +23,17 @@ class RegisterForm(Form):
 	name = TextField(
 		'Username',
 		validators=[DataRequired(),
-		Length(min=6, max=25)]
+		Length(min=5, max=25)]
 	)
 	email = TextField(
 		'Email',
 		validators=[DataRequired(),
-		Length(min=6, max=40)]
+		Length(min=5, max=40)]
 	)
 	password = PasswordField(
 		'Password',
 		validators=[DataRequired(),
-		Length(min=6, max=40)])
+		Length(min=5, max=40)])
 	confirm = PasswordField(
 		'Repeat Password',
 		[DataRequired(),
