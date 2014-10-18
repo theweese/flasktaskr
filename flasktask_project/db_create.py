@@ -1,8 +1,6 @@
 # db_create.py
 
-from views import db
-from models import Task
-from datetime import date
+from project import db
 
 # creates the database and the table
 db.create_all()
